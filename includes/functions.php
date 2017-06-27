@@ -30,7 +30,6 @@ function getSetting($vkey) {
 	}
 }
 
-
 function StripTrailingSlash($_URL)
 {
 	if (substr($_URL, -1, 1) == "/") {

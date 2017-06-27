@@ -1,6 +1,7 @@
 <?php
 
 require_once 'includes/chkLogin.php';
+require_once 'includes/userinfoupdater.php';
 
 if ( ! isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) ) {
 	exit;
@@ -41,6 +42,7 @@ switch ( $status ) {
 			$disableUser->bindParam(':group',$disabledGroup,PDO::PARAM_STR);
 			$disableUser->execute();
 			if ($disableUser->rowCount() == 1) {
+				updateUserInfo($username);
 				echo 'Disabled';
 				exit;
 			} else {
@@ -48,7 +50,6 @@ switch ( $status ) {
 				exit;
 			}
 		}
-
 		break;
 
 	case 'enable':
@@ -66,6 +67,7 @@ switch ( $status ) {
 			$enableUser->bindParam(':group',$disabledGroup,PDO::PARAM_STR);
 			$enableUser->execute();
 			if ($enableUser->rowCount() > 0) {
+				updateUserInfo($username);
 				echo 'Enabled';
 				exit;
 			} else {

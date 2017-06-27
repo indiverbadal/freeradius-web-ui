@@ -17,6 +17,7 @@ if ( empty( $_POST['username'] ) || empty( $_POST['encryption'] ) ) {
 }
 
 require_once '../includes/config.php';
+require_once 'includes/userinfoupdater.php';
 
 try {
 	$link = new PDO( RAD_DB_DRIVER . ':host=' . RAD_DB_HOST . ';dbname=' . RAD_DB_NAME, RAD_DB_USER, RAD_DB_PASS );
@@ -24,14 +25,20 @@ try {
 	die( $Exception->getMessage() );
 }
 
-require_once './includes/class.RandomPassword.php';
-$Password          = new RandomPassword();
-$plainTextPassword = $Password->getPassword();
+if (isset($_POST['password'])) {
+    $plainTextPassword = $_POST['password'];
+} else {
+    require_once './includes/class.RandomPassword.php';
+    $Password          = new RandomPassword();
+    $plainTextPassword = $Password->getPassword();
+}
 
 if ( $encryption == 'SHA-Password' ) {
 	$encryptedPassword = sha1( $plainTextPassword );
 } else if ( $encryption == 'MD5-Password' ) {
 	$encryptedPassword = md5( $plainTextPassword );
+} else if ( $encryption == 'Cleartext-Password' ) {
+    $encryptedPassword = $plainTextPassword;
 } else {
 	$encryptedPassword = '';
 }
@@ -53,7 +60,7 @@ function currentPassword() {
 
 function userFullName() {
 	global $link, $username;
-	$fetchName = $link->prepare( "SELECT fullname FROM radcheck WHERE username = :username" );
+	$fetchName = $link->prepare( "SELECT fullname FROM userinfo WHERE username = :username" );
 	$fetchName->bindParam( ':username', $username, PDO::PARAM_STR );
 	$fetchName->execute();
 	$fullname = $fetchName->fetch( PDO::FETCH_OBJ );
@@ -63,7 +70,7 @@ function userFullName() {
 
 function userEmail() {
 	global $link, $username;
-	$fetchEmail = $link->prepare( "SELECT email FROM radcheck WHERE username = :username" );
+	$fetchEmail = $link->prepare( "SELECT email FROM userinfo WHERE username = :username" );
 	$fetchEmail->bindParam( ':username', $username, PDO::PARAM_STR );
 	$fetchEmail->execute();
 	$email = $fetchEmail->fetch( PDO::FETCH_OBJ );
@@ -71,9 +78,25 @@ function userEmail() {
 	return $email->email;
 }
 
-$resetPassword = $link->prepare( 'UPDATE radcheck SET value = :password WHERE username = :username' );
+$resetPassword = $link->prepare( 'UPDATE radcheck SET value = :password, attribute = :attribute WHERE username = :username AND attribute LIKE "%Password"' );
 $resetPassword->bindParam( ':password', $encryptedPassword, PDO::PARAM_STR );
 $resetPassword->bindParam( ':username', $username, PDO::PARAM_STR );
+$resetPassword->bindParam( ':attribute', $encryption, PDO::PARAM_STR );
+$resetPassword->execute();
+
+if ($resetPassword->rowCount() == 1) {
+    updateUserInfo($username);
+    echo 'PasswordReset';
+} else {
+    echo 'ErrorUpdatePassword';
+    exit;
+}
+
+if ( $_SESSION['MAIL_SEND'] != 'enable' ) {
+    echo 'PasswordReset';
+    exit;
+}
+
 
 require 'includes/class.phpmailer.php';
 require 'includes/class.smtp.php';
@@ -238,29 +261,12 @@ $Mail->Body = "
 </html>
 ";
 
-$resetPassword->execute();
-
-if ($resetPassword->rowCount() == 1) {
-	if ($Mail->send()) {
-		echo 'PasswordReset';
-		exit;
-	} else {
-		$lastPassword = $link->prepare("UPDATE radcheck SET password = :password WHERE username = :username");
-		$lastPassword->bindParam(':password',currentPassword(),PDO::PARAM_STR);
-		$lastPassword->bindParam(':username',$username,PDO::PARAM_STR);
-		$lastPassword->execute();
-		if ($lastPassword->rowCount() == 1) {
-			echo 'ErrorPasswordReset';
-			exit;
-		} else {
-			echo 'Error';
-			exit;
-		}
-	}
+if ( $Mail->send() ) {
+    echo 'MailSent';
+    exit;
 } else {
-	echo 'ErrorUpdatePassword';
-	exit;
+    echo 'EmailError';
+    exit;
 }
-
 
 

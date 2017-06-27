@@ -28,7 +28,12 @@ function deleteUser() {
 	$deleteUser = $link->prepare("DELETE FROM radcheck WHERE username = :username");
 	$deleteUser->bindParam(':username',$username,PDO::PARAM_STR);
 	$deleteUser->execute();
-	if ($deleteUser->rowCount()==1) {
+
+	$deleteUInfo = $link->prepare("DELETE FROM userinfo WHERE username = :username");
+	$deleteUInfo->bindParam(':username',$username,PDO::PARAM_STR);
+	$deleteUInfo->execute();
+
+	if (($deleteUser->rowCount()==1) && ($deleteUInfo->rowCount()==1)) {
 		return 'Deleted';
 	} else {
 		return 'ErrorDelete';

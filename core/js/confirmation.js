@@ -72,19 +72,26 @@ function confirmUserDelete(id, username) {
  * @param encryption
  */
 function confirmUserPasswordReset(id, username, encryption) {
-	var message = "Are you sure that you want to reset the password for user: <span style='font-weight:bold;'>" + username + "</span>?<br/><br/>After resetting the password user will be notified via email, if your SMTP setting is enabled.";
+	var message = "Are you sure that you want to reset the password for user: <span style='font-weight:bold;'>" +
+					username + "</span>?<br/><br/>" +
+				    "<label>New Password</label>" +
+				    "<div class='input-control password'>" +
+				    "<input type='password' id='newPass'> " +
+				    "</div> " +
+					"After resetting the password user will be notified via email (if SMTP is enabled)";
 	$.Dialog({
 				 overlay: true,
 				 shadow: true,
 				 flat: true,
 				 draggable: true,
 				 padding: 20,
+				 height: 250,
 				 content: "<p>" + message + "</p>" +
 
 				 "<div class='place-right'>" +
 				 "<button class='button' type='button' onclick='$.Dialog.close()'>No</button> " +
 				 "<button class='button dark' type='button' onclick='resetUserAccountPassword(" +
-				 id + ',"' + username + '","' + encryption + '"' +
+				 id + ',"' + username + '","' + encryption +
 				 "); $.Dialog.close();'>Yes</button> " +
 				 "</div>"
 			 });

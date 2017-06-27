@@ -43,6 +43,7 @@ if ( $loadNAS->rowCount() < 1 ) {
 	<tr>
 		<td class="text-bold">IP/Host</td>
 		<td class="text-bold">Short Name</td>
+		<td class="text-bold">Secret</td>
 		<td class="text-bold">Type</td>
 		<td class="text-bold">Port</td>
 		<td class="text-bold">Server</td>
@@ -56,6 +57,7 @@ if ( $loadNAS->rowCount() < 1 ) {
 		<tr>
 			<td><?php echo $nasInfo->nasname; ?></td>
 			<td><?php echo $nasInfo->shortname; ?></td>
+			<td><?php echo $nasInfo->secret; ?></td>
 			<td><?php echo $nasInfo->type; ?></td>
 			<td><?php echo $nasInfo->ports; ?></td>
 			<td><?php echo $nasInfo->server; ?></td>
@@ -69,7 +71,7 @@ if ( $loadNAS->rowCount() < 1 ) {
 					<i class="icon-pencil"></i>
 				</a>
 				&nbsp;&nbsp;
-				<a id="delete<?php echo $nasInfo->id; ?>" href="javascript:void(0);" onclick="javascript:confirmNASDelete(<?php echo $nasInfo->id; ?>,'<?php echo $nasInfo->nasname; ?>');" class="text-warning" id="delete<?php echo $userInfo->id; ?>" data-hint="Delete NAS">
+				<a id="delete<?php echo $nasInfo->id; ?>" href="javascript:void(0);" onclick="javascript:confirmNASDelete(<?php echo $nasInfo->id; ?>,'<?php echo $nasInfo->nasname; ?>');" class="text-warning" id="delete<?php echo $nasInfo->id; ?>" data-hint="Delete NAS">
 					<i class="icon-remove"></i>
 				</a>
 			</td>

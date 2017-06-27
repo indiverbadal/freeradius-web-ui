@@ -9,7 +9,7 @@ if ( preg_match( "/footer.php/", $_SERVER['SCRIPT_NAME'] ) ) {
 	<div style="padding: 8px;">
 		<p>
 			<span class="place-right" style="padding-right: 50px; color: #ffffff;">
-				Made with <i class="icon-heart"></i> by: <a href="https://gitlab.com/groups/arch-lamp" style="color: #ffffff;">arch-lamp</a>
+				Polaris Radius Manager</a>
 			</span>
 		</p>
 	</div>

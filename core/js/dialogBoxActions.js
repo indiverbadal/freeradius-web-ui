@@ -85,11 +85,12 @@ function addNewUser() {
 	var username = $('#username').val();
 	var email = $('#email').val();
 	var passwordType = $('input[name=passwordType]:checked').val();
+	var password_input = $('#password').val();
 
-	if (!passwordType || fullname.length == 0 || username.length == 0 || email.length == 0) {
+	if (!passwordType || fullname.length == 0 || username.length == 0 || email.length == 0 ) {
 		$('#loading').removeClass(removeClass).addClass('text-danger').show().html('All fields must be filled.');
 	} else {
-		var data = 'fullname=' + fullname + '&username=' + username + '&email=' + email + '&passwordType=' + passwordType;
+		var data = 'fullname=' + fullname + '&username=' + username + '&email=' + email + '&password=' + password_input + '&passwordType=' + passwordType;
 		var addClass = '';
 		var info = '';
 		$.ajax({
@@ -143,6 +144,7 @@ function addNewUser() {
 					   $('#fullname').val('');
 					   $('#email').val('');
 					   $('#username').val('');
+					   $('#password').val('');
 					   $("#passwordType").prop("checked", false);
 				   }
 			   });

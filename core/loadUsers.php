@@ -27,7 +27,11 @@ if ( isset( $_POST['page'] ) ) {
 $recordPerPage = 10;
 $startPage     = ( $page - 1 ) * $recordPerPage;
 
-$loadUsersQuery = "SELECT rc.id, rc.username, rc.attribute, rc.fullname, rc.email, rug.groupname FROM radcheck rc LEFT OUTER JOIN radusergroup rug ON(rc.username = rug.username) ORDER BY id DESC  LIMIT $startPage, $recordPerPage";
+
+$loadUsersQuery = "SELECT rc.id, rc.username, rc.attribute, ui.fullname, ui.email, ui.updatedate, ui.updateby, rug.groupname FROM radcheck rc 
+	LEFT OUTER JOIN userinfo ui ON (rc.username = ui.username)
+	LEFT OUTER JOIN radusergroup rug ON (rc.username = rug.username)
+	ORDER BY id DESC LIMIT $startPage, $recordPerPage";
 
 $loadUsers = $link->prepare( $loadUsersQuery );
 $loadUsers->execute();
@@ -45,7 +49,8 @@ if ( $loadUsers->rowCount() < 1 ) {
 		<td class="text-bold">Full Name</td>
 		<td class="text-bold">Username</td>
 		<td class="text-bold">Email</td>
-		<td class="text-bold">Account Status</td>
+		<td class="text-bold">Status</td>
+		<td class="text-bold">Last Modified</td>
 		<td class="text-bold">Actions</td>
 	</tr>
 	</thead>
@@ -74,6 +79,8 @@ if ( $loadUsers->rowCount() < 1 ) {
 				}
 				?>
 			</td>
+
+			<td><?php echo ($userInfo->updatedate ? $userInfo->updatedate." by ".($userInfo->updateby ?: "Unknown"): "Unknown"); ?></td>
 
 			<td id="action-<?php echo $userInfo->id ?>">
 				<?php

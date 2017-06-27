@@ -72,7 +72,21 @@ function addNewUserDialog() {
 				 '<button tabindex="-1" class="btn-clear" type="button"></button>' +
 				 '</div> ' +
 
+				 '<label>Password</label>' +
+				 '<div class="input-control text">' +
+				 '<input type="password" id="password"> ' +
+				 '<button tabindex="-1" class="btn-clear" type="button"></button>' +
+				 '</div> ' + 
+
 				 '<label>Password Type</label>' +
+
+				 '<div class="input-control radio margin5">' +
+				 '<label>' +
+				 '<input type="radio" class="" name="passwordType" value="Cleartext-Password" checked="checked"/>' +
+				 '<span class="check"></span>' +
+				 'Cleartext-Password' +
+				 '</label>' +
+				 '</div>' +
 
 				 '<div class="input-control radio margin5">' +
 				 '<label>' +

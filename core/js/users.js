@@ -212,7 +212,9 @@ function deleteUserAccount(id, username) {
 function resetUserAccountPassword(id, username, encryption) {
 	loadDisplay('action-' + id);
 	var currentPage = parseInt($('#currentPage').val());
-	var data = 'username=' + username + '&encryption=' + encryption;
+	// var password = Base64Encode($.trim($('#newPass').val()));
+	var password = Base64Encode($.trim($('test').val()));
+	var data = 'username=' + username + '&encryption=' + encryption + '&password=' + password;
 	var heading = '';
 	var message = '';
 	$.ajax({

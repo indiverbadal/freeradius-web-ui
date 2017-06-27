@@ -125,6 +125,9 @@ function viewNASInfo(nasId) {
 
 							   '</tr><tr>' +
 
+							   '<tr></tr><td><span style="font-weight: bold;">Secret</span></td>' +
+							   '<td>' + info.secret + '</td></tr>' +
+
 							   '<td><span style="font-weight: bold;">Type</span></td>' +
 							   '<td>' + info.type + '</td></tr>' +
 

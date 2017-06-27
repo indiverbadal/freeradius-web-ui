@@ -9,7 +9,7 @@ if ( $_SERVER['REQUEST_METHOD'] != 'POST' ) {
 	exit;
 }
 
-if ( empty( $_POST['fullname'] ) || empty( $_POST['username'] ) || empty( $_POST['passwordType'] ) || empty( $_POST['email'] ) ) {
+if ( empty( $_POST['fullname'] ) || empty( $_POST['username'] ) || empty( $_POST['passwordType'] ) ) {
 	echo 'Empty';
 	exit;
 } else {
@@ -20,8 +20,11 @@ if ( empty( $_POST['fullname'] ) || empty( $_POST['username'] ) || empty( $_POST
 	require_once 'includes/class.RandomPassword.php';
 
 	$op            = ':==';
-	$Password      = new RandomPassword();
-	$plainPassword = $Password->getPassword();
+    $plainPassword = $_POST['password'];
+    if ( $plainPassword == '' ) {}
+        $Password      = new RandomPassword();
+        $plainPassword = $Password->getPassword();
+    }
 
 	if ( $passwordType == 'MD5' ) {
 		$password  = md5( $plainPassword );
@@ -32,6 +35,10 @@ if ( empty( $_POST['fullname'] ) || empty( $_POST['username'] ) || empty( $_POST
 		$password  = sha1( $plainPassword );
 		$attribute = 'SHA-Password';
 	}
+
+    if ( $passwordType == 'Cleartext-Password' ) {
+        $password  = $plainPassword;
+        $attribute = 'Cleartext-Password';
 }
 
 if ( ! filter_var( $email, FILTER_VALIDATE_EMAIL ) ) {
@@ -63,20 +70,30 @@ if ( $chkEmail->rowCount() == 1 ) {
 	exit;
 }
 
-$registerUser = $link->prepare( 'INSERT INTO radcheck(username, attribute, op, value, fullname, email)  VALUES(:username, :attribute, :op, :password,:fullname,:email)' );
+$registerUser = $link->prepare( 'INSERT INTO radcheck(username, attribute, op, value)  VALUES(:username, :attribute, :op, :password)' );
 
 $registerUser->bindParam( ':username', $username );
 $registerUser->bindParam( ':attribute', $attribute );
 $registerUser->bindParam( ':op', $op );
 $registerUser->bindParam( ':password', $password );
-$registerUser->bindParam( ':fullname', $fullname );
-$registerUser->bindParam( ':email', $email );
-
 $registerUser->execute();
 
-if ( $registerUser->rowCount() != 1 ) {
-	echo 'Error';
-	exit;
+$modtime = date("Y-m-d H:i:s");
+$modby = $_SESSION['USERNAME'] ?: "unknown";
+$registerUInfo = $link->prepare( 'INSERT INTO userinfo(username, fullname, email, creationdate, creationby, updatedate, updateby)  VALUES(:username, :fullname, :email, :creationdate, :creationby, :updatedate, :updateby)' );
+
+$registerUInfo->bindParam( ':username', $username );
+$registerUInfo->bindParam( ':fullname', $fullname );
+$registerUInfo->bindParam( ':email', $email );
+$registerUInfo->bindParam( ':creationdate', $modtime );
+$registerUInfo->bindParam( ':creationby', $modby );
+$registerUInfo->bindParam( ':updatedate', $modtime );
+$registerUInfo->bindParam( ':updateby', $modby );
+$registerUInfo->execute();
+
+if ( $registerUInfo->rowCount() != 1 ||  $registerUser->rowCount() != 1 ) {
+    echo 'Error';
+    exit;
 }
 
 if ( $_SESSION['MAIL_SEND'] != 'enable' ) {

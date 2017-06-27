@@ -145,11 +145,27 @@ CREATE TABLE IF NOT EXISTS rmsettings
 );
 EOSQL;
 
-$dbTable['alterRadcheck'] = <<<EOSQL
-ALTER TABLE radcheck ADD COLUMN fullname VARCHAR (255) NOT NULL, ADD COLUMN email VARCHAR (255) UNIQUE NOT NULL;
+$dbTable['userinfo'] = <<<EOSQL
+CREATE TABLE IF NOT EXISTS userinfo
+(
+	id int(10) NOT NULL auto_increment,
+	username VARCHAR (255) PRIMARY KEY,
+	fullname VARCHAR (128) NOT NULL,
+	email VARCHAR (128),
+	mobilephone VARCHAR (128),
+	creationdate DATETIME,
+	creationby VARCHAR (128),
+	updatedate DATETIME,
+	updateby VARCHAR (128),
+	notes VARCHAR (200)
+);
 EOSQL;
+
+//$dbTable['alterRadcheck'] = <<<EOSQL
+//ALTER TABLE radcheck ADD COLUMN fullname VARCHAR (255) NOT NULL, ADD COLUMN email VARCHAR (255) UNIQUE NOT NULL;
+//EOSQL;
 
 
 $dbTable['insertDisableGroup'] = <<<EOSQL
-INSERT INTO radgroupcheck  (groupname,attribute,op,value) VALUES ('freeRADIUS-Disabled-Users','Auth-Type',':=','Reject');
+INSERT INTO radgroupcheck (groupname,attribute,op,value) VALUES ('freeRADIUS-Disabled-Users','Auth-Type',':=','Reject');
 EOSQL;
